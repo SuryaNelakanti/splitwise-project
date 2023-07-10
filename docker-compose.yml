@@ -1,0 +1,46 @@
+version: '3.9'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:  "alembic upgrade head"
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app/
+    depends_on:
+      - db
+    restart: 
+      always
+    networks:
+      - splitwise-network
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    expose:
+      - 5432
+    environment:
+      POSTGRES_DB: splitwise
+      POSTGRES_USER: local
+      POSTGRES_PASSWORD: password
+    networks:
+      - splitwise-network
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+
+networks:
+  splitwise-network:
