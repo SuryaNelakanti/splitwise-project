@@ -161,14 +161,34 @@ def create_group_expense(expense: schemas.ExpenseCreate, db: Session ):
     
     return db_expense
 
+def put_expense_to_group(expense_id: str, user_id: str, amount_paid: int, db: Session):
+    db_expense = db.query(Expense).filter(Expense.id == expense_id).first()
+    if not db_expense:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    db_expense_user = db.query(ExpenseUser).filter(ExpenseUser.expense == expense_id, ExpenseUser.user_id == user_id).first()
 
-# Get expenses by expense_description
-def get_expenses_by_description(
-    expense_description: str,
-    db: Session 
-):
-    db_expenses = db.query(Expense).filter(Expense.description.ilike(f"%{expense_description}%")).all()
-    return db_expenses
+    if not db_expense_user:
+        raise HTTPException(status_code=404, detail="User Expense not found")
+    import pdb;
+    pdb.set_trace()
+    db_expense_user.amount_paid = int(db_expense_user.amount_paid) +amount_paid
+    db_expense_user.amount_owed = int(db_expense_user.amount_paid)-amount_paid
+
+    db_user_owed_to = db.query(User).filter(User.id == db_expense.user).first()
+    db_expense_user_owed_to = db.query(ExpenseUser).filter(ExpenseUser.expense == expense_id, ExpenseUser.user_id == db_user_owed_to.id).first()
+
+    db_expense_user_owed_to.amount_owed = int(db_expense_user_owed_to.amount_owed)- amount_paid
+
+    db.commit()
+    db.refresh(db_expense_user)
+    db.refresh(db_expense_user_owed_to)
+    return db_expense_user
+
 
 
 # Filter expenses by date
@@ -189,10 +209,26 @@ def filter_expenses_by_group(
     return db_expenses
 
 
-# Get expenses by user_id along with owed and paid amounts
 def get_expenses_by_user(
     user_id: str,
     db: Session 
 ):
-    db_expenses = db.query(ExpenseUser).filter(ExpenseUser.user_id == user_id).all()
-    return db_expenses
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    balances = db.query(
+        ExpenseUser
+    ).filter(ExpenseUser.user_id == user_id).all()
+
+    total_paid = 0
+    total_owed = 0
+    for balance in balances:
+        total_paid += balance.amount_paid
+        total_owed += balance.amount_owed
+   
+    balances = {
+        "total_paid": total_paid,
+        "total_owed": total_owed,
+    }
+    return balances

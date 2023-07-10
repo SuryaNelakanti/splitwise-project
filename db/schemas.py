@@ -100,3 +100,18 @@ class GroupExpense(ExpenseBase):
     class Config:
         orm_mode = True
 
+
+class UserExpenseBase(BaseModel):
+    user_id: uuid.UUID
+    amount_paid: int
+    amount_owed: int
+    # owed_to: uuid.UUID
+    # net_balance: int
+
+class UserExpense(UserExpenseBase):
+    id: uuid.UUID
+    expense: uuid.UUID
+
+class Balances(BaseModel):
+    total_paid: int
+    total_owed: int

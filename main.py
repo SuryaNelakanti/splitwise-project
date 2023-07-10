@@ -76,12 +76,12 @@ def get_members_of_group(
     return db_users
 
 
-@app.post("/group_expense/", response_model=schemas.GroupExpense, tags=["Expenses"])
+@app.post("/group_expense/", response_model=schemas.GroupExpense, tags=["GroupExpenses"])
 def create_group_expense(expense: schemas.ExpenseCreate, db: Session = Depends(get_db)):
     db_expense = crud.create_group_expense(db=db, expense=expense)
     return db_expense
 
-@app.get("/group_expense/", response_model=list[schemas.GroupExpense], tags=["Expenses"])
+@app.get("/group_expense/", response_model=list[schemas.GroupExpense], tags=["GroupExpenses"])
 def filter_expenses_by_group(
     group_id: str,
     db: Session = Depends(get_db)
@@ -91,28 +91,12 @@ def filter_expenses_by_group(
 
 
 # Get expenses by user_id along with owed and paid amounts
-@app.get("/user_expense/", response_model=list[schemas.UserExpense], tags=["Expenses"])
+@app.get("/user_expense/", response_model=schemas.Balances, tags=["UserExpenses"])
 def get_expenses_by_user(user_id: str, db: Session = Depends(get_db)):
     db_expenses = crud.get_expenses_by_user(db=db, user_id=user_id)
     return db_expenses
 
-# # Get expenses by expense_description
-# @app.get("/expenses/{expense_description}", response_model=list[schemas.Expense])
-# def get_expenses_by_description(
-#     expense_description: str,
-#     db: Session = Depends(get_db)
-# ):
-#     db_expenses = crud.get_expenses_by_description(db, expense_description=expense_description)
-#     return db_expenses
-
-
-# # Filter expenses by date
-# @app.get("/expenses/filter/date/", response_model=list[schemas.Expense])
-# def filter_expenses_by_date(
-#     start_date: date,
-#     end_date: date,
-#     db: Session = Depends(get_db)
-# ):
-#     db_expenses = crud.filter_expenses_by_date(db, start_date=start_date, end_date=end_date)
-#     return db_expenses
-
+@app.put("/user_expense/", response_model=schemas.UserExpense, tags=["UserExpenses"])
+def put_expense_from_user_to_group(user_id: str, amount: int, expense_id: str, db: Session = Depends(get_db)):
+    db_expenses = crud.put_expense_to_group(db=db, user_id=user_id, expense_id=expense_id, amount_paid=amount)
+    return db_expenses
