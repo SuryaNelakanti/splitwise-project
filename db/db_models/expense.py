@@ -22,5 +22,7 @@ class ExpenseUser(BaseMeta):
     user_id = Column(UUID(as_uuid=True), ForeignKey('user.id'))
     amount_paid = Column(Integer, default=0)
     amount_owed = Column(Integer, default=0)
-    net_balance = Column(Integer, default=0)
+    owed_to = Column(UUID(as_uuid=True), ForeignKey('user.id'), nullable=True)
+    # net_balance = Column(Integer, default=0)
     user = Column(UUID(as_uuid=True), ForeignKey("user.id"), index=True)
+    expense = Column(UUID(as_uuid=True), ForeignKey("expense.id"), index=True)

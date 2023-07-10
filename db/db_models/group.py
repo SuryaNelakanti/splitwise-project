@@ -10,7 +10,6 @@ Base = declarative_base()
 class Group(BaseMeta):
     id = Column(UUID(as_uuid=True), primary_key=True, index=True)
     name = Column(String(255), nullable=False)
-    members = Column(UUID(as_uuid=True), ForeignKey('groupmember.id'), index=True, nullable=True)
 
 
 class GroupMember(BaseMeta):

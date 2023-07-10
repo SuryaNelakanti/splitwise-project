@@ -22,6 +22,7 @@ class User(UserBase):
 
 class GroupMemberBase(BaseModel):
     user_id: uuid.UUID
+    group_id: uuid.UUID
 
 
 class GroupMemberCreate(GroupMemberBase):
@@ -29,8 +30,7 @@ class GroupMemberCreate(GroupMemberBase):
 
 
 class GroupMember(GroupMemberBase):
-    group_id: uuid.UUID
-
+    id: uuid.UUID
     class Config:
         orm_mode = True
 
@@ -46,7 +46,6 @@ class GroupCreate(GroupBase):
 
 class Group(GroupBase):
     id: uuid.UUID
-    # members: list[GroupMember] = []
 
     class Config:
         orm_mode = True
@@ -78,14 +77,25 @@ class ExpenseBase(BaseModel):
 
 
 class ExpenseCreate(ExpenseBase):
-    users: list[ExpenseUserCreate]
     group_id: uuid.UUID
+    users: list[uuid.UUID] = []
+    payee: uuid.UUID
+    amount_paid: int
 
 
 class Expense(ExpenseBase):
     id: uuid.UUID
     users: list[ExpenseUser] = []
     group_id: uuid.UUID
+
+    class Config:
+        orm_mode = True
+
+
+class GroupExpense(ExpenseBase):
+    id: uuid.UUID
+    user: uuid.UUID
+    group: uuid.UUID
 
     class Config:
         orm_mode = True
