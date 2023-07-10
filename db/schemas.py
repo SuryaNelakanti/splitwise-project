@@ -15,7 +15,7 @@ class UserCreate(UserBase):
 class User(UserBase):
     id: str
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class GroupMemberBase(BaseModel):
     user_id: str
@@ -29,7 +29,7 @@ class GroupMember(GroupMemberBase):
     group_id: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class GroupBase(BaseModel):
@@ -45,7 +45,7 @@ class Group(GroupBase):
     members: list[GroupMember] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ExpenseUserBase(BaseModel):
@@ -63,7 +63,7 @@ class ExpenseUser(ExpenseUserBase):
     id: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ExpenseBase(BaseModel):
@@ -83,4 +83,4 @@ class Expense(ExpenseBase):
     group_id: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
