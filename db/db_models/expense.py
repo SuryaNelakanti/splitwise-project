@@ -12,7 +12,8 @@ class Expense(BaseMeta):
     total_amount = Column(Integer, nullable=False)
     description = Column(String(255), nullable=False)
 
-    users = relationship("ExpenseUser", secondary="expense_users")
+    user = Column(UUID(as_uuid=True), ForeignKey("user.id"), index=True)
+
     group = Column(UUID(as_uuid=True), ForeignKey("group.id"), index=True)
 
 
@@ -22,4 +23,4 @@ class ExpenseUser(BaseMeta):
     amount_paid = Column(Integer, default=0)
     amount_owed = Column(Integer, default=0)
     net_balance = Column(Integer, default=0)
-    user = relationship("UserProfile", backref="expense_user")
+    user = Column(UUID(as_uuid=True), ForeignKey("user.id"), index=True)

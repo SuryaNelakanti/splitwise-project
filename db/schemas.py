@@ -1,4 +1,4 @@
-
+import uuid
 import datetime
 from pydantic import BaseModel
 
@@ -13,12 +13,15 @@ class UserCreate(UserBase):
 
 
 class User(UserBase):
-    id: str
+    id: uuid.UUID
+    phone_number: str
     class Config:
-        from_attributes = True
+        orm_mode = True
+
+
 
 class GroupMemberBase(BaseModel):
-    user_id: str
+    user_id: uuid.UUID
 
 
 class GroupMemberCreate(GroupMemberBase):
@@ -26,10 +29,11 @@ class GroupMemberCreate(GroupMemberBase):
 
 
 class GroupMember(GroupMemberBase):
-    group_id: str
+    group_id: uuid.UUID
 
     class Config:
-        from_attributes = True
+        orm_mode = True
+
 
 
 class GroupBase(BaseModel):
@@ -41,15 +45,16 @@ class GroupCreate(GroupBase):
 
 
 class Group(GroupBase):
-    id: str
-    members: list[GroupMember] = []
+    id: uuid.UUID
+    # members: list[GroupMember] = []
 
     class Config:
-        from_attributes = True
+        orm_mode = True
+
 
 
 class ExpenseUserBase(BaseModel):
-    user_id: str
+    user_id: uuid.UUID
     amount_paid: int
     amount_owed: int
     net_balance: int
@@ -60,10 +65,10 @@ class ExpenseUserCreate(ExpenseUserBase):
 
 
 class ExpenseUser(ExpenseUserBase):
-    id: str
+    id: uuid.UUID
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 class ExpenseBase(BaseModel):
@@ -74,13 +79,14 @@ class ExpenseBase(BaseModel):
 
 class ExpenseCreate(ExpenseBase):
     users: list[ExpenseUserCreate]
-    group_id: str
+    group_id: uuid.UUID
 
 
 class Expense(ExpenseBase):
-    id: str
+    id: uuid.UUID
     users: list[ExpenseUser] = []
-    group_id: str
+    group_id: uuid.UUID
 
     class Config:
-        from_attributes = True
+        orm_mode = True
+

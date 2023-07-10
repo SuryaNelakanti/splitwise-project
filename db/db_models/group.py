@@ -10,11 +10,11 @@ Base = declarative_base()
 class Group(BaseMeta):
     id = Column(UUID(as_uuid=True), primary_key=True, index=True)
     name = Column(String(255), nullable=False)
-    members = relationship("user", secondary="group_members")
+    members = Column(UUID(as_uuid=True), ForeignKey('groupmember.id'), index=True, nullable=True)
 
 
-group_members = Table(
-    'group_members', Base.metadata,
-    Column('group_id', String, ForeignKey('group.id')),
-    Column('user_id', String, ForeignKey('user.id'))
-)
+class GroupMember(BaseMeta):
+    id = Column(UUID(as_uuid=True), primary_key=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('user.id'))
+    group_id = Column(UUID(as_uuid=True), ForeignKey('group.id'))
+

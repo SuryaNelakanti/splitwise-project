@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 
 from core import Settings
 from db import crud, schemas
@@ -34,22 +34,24 @@ async def ping():
 @app.post("/user/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
+    if db_user:
+         raise HTTPException(status_code=400, detail="Email already registered")
     db_user = crud.create_user(db=db, user=user)
     return db_user
 
 @app.get("/users/", response_model=list[schemas.User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_users(limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db,  limit=limit)
     return users
 
 
-@app.post("/groups/", response_model=schemas.Group)
+@app.post("/group/", response_model=schemas.Group)
 def create_group(group: schemas.GroupCreate, db: Session = Depends(get_db)):
     db_group = crud.create_group(db=db, group=group)
     return db_group
 
 # Add a member to a group
-@app.post("/groups/{group_id}/members/", response_model=schemas.Group)
+@app.post("/group/{group_id}/members/", response_model=schemas.Group)
 def add_member_to_group(
     group_id: str,
     member: schemas.GroupMemberCreate,

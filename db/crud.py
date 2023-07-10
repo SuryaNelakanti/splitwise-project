@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from datetime import date
 from db import schemas
-from db.db_models import User, Group, group_members, Expense, ExpenseUser
+from db.db_models import User, Group, GroupMember, Expense, ExpenseUser
 
 def create_user(db: Session, user: schemas.UserCreate):
     db_user = User(email=user.email, phone_number=user.phone_number, name=user.name, id=uuid.uuid4())
@@ -45,7 +45,7 @@ def add_member_to_group(
     if not db_group:
         raise HTTPException(status_code=404, detail="Group not found")
     
-    db_member = group_members(
+    db_member = GroupMember(
         user_id=member.user_id,
         group_id=group_id
     )
