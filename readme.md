@@ -2,6 +2,8 @@
 
 The Splitwise App is a simple expense tracking and splitting application that helps users manage shared expenses among friends, roommates, or groups. It allows users to create groups, add expenses, and keep track of who owes whom.
 
+Testing out a new commit using vim.
+
 Features
 User Registration: Users can register in the app
 
@@ -59,3 +61,6 @@ Run the Docker Compose file:
 ```bash
 docker-compose up
 ```
+
+Some new changes.
+
